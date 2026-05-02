@@ -1,0 +1,8 @@
+2026-05-02 19:15:19,303 [INFO] Found credentials in environment variables.
+2026-05-02 19:15:20,672 [INFO] Starting upload to prefix: 2026-05-02_19-15-20/
+2026-05-02 19:15:23,028 [ERROR] Failed to list bucket prefixes: An error occurred (InvalidAccessKeyId) when calling the ListObjectsV2 operation: The AWS Access Key Id you provided does not exist in our records.
+2026-05-02 19:15:23,031 [INFO] No previous backup found. Performing full backup.
+2026-05-02 19:15:23,031 [INFO] Scanning 2 files for changes...
+2026-05-02 19:15:23,109 [INFO] [DRY RUN] Would upload file: C:\Projs\s3-backup-tool\test_dir\file1.txt
+2026-05-02 19:15:23,109 [INFO] [DRY RUN] Would upload file: C:\Projs\s3-backup-tool\test_dir\file2.txt
+2026-05-02 19:15:23,111 [INFO] Backup completed. Uploaded: 2, Skipped (Copied): 0, Failed: 0
