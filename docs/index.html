@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>S3 Backup Tool — Production-Grade Incremental Backup for AWS S3</title>
+  <meta name="description" content="A production-grade, CLI-based incremental backup utility built with Python and AWS boto3. Intelligent MD5-based change detection, encryption, and lifecycle automation.">
+  <link rel="stylesheet" href="index.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>☁️</text></svg>">
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="nav" id="navbar">
+    <div class="container nav-inner">
+      <a href="#" class="nav-logo">
+        <span class="logo-icon">☁️</span>
+        <span>S3 Backup</span>
+      </a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="#features">Features</a></li>
+        <li><a href="#architecture">Architecture</a></li>
+        <li><a href="#deepdive">How It Works</a></li>
+        <li><a href="#usage">Usage</a></li>
+        <li><a href="#start">Get Started</a></li>
+      </ul>
+      <a href="https://github.com/kevinjosh10/s3-backup-tool" target="_blank" class="nav-cta">⭐ GitHub</a>
+      <button class="mobile-toggle" id="mobileToggle" aria-label="Toggle navigation">☰</button>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero" id="hero">
+    <div class="hero-bg-glow blue"></div>
+    <div class="hero-bg-glow orange"></div>
+    <div class="container hero-content">
+      <div class="hero-text">
+        <div class="hero-badge">
+          <span class="pulse-dot"></span>
+          Production Ready
+        </div>
+        <h1 class="hero-title">
+          <span class="gradient-text">S3 Backup Tool</span><br>
+          Ship Backups,<br>Not Worries.
+        </h1>
+        <p class="hero-subtitle">
+          A production-grade CLI utility for intelligent, incremental backups to AWS S3 — with MD5 metadata injection, AES-256 encryption, and automated lifecycle management.
+        </p>
+        <div class="hero-actions">
+          <a href="https://github.com/kevinjosh10/s3-backup-tool" target="_blank" class="btn btn-primary">
+            <span>⬇</span> Clone Repository
+          </a>
+          <a href="#start" class="btn btn-secondary">
+            <span>📖</span> Quick Start
+          </a>
+        </div>
+        <div class="hero-stats">
+          <div class="hero-stat">
+            <div class="hero-stat-value">4</div>
+            <div class="hero-stat-label">Core Modules</div>
+          </div>
+          <div class="hero-stat">
+            <div class="hero-stat-value">AES-256</div>
+            <div class="hero-stat-label">Encryption</div>
+          </div>
+          <div class="hero-stat">
+            <div class="hero-stat-value">100%</div>
+            <div class="hero-stat-label">Change Detection</div>
+          </div>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <img src="assets/hero.png" alt="S3 Backup Tool Cloud Visualization">
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section id="features">
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="section-tag">Capabilities</span>
+        <h2 class="section-title">Enterprise Features,<br>Open-Source Simplicity</h2>
+        <p class="section-desc">Built from the ground up to handle real-world backup scenarios with the reliability your data deserves.</p>
+      </div>
+      <div class="features-grid">
+        <div class="feature-card reveal">
+          <div class="feature-icon blue">🚀</div>
+          <h3 class="feature-title">Incremental Backups</h3>
+          <p class="feature-desc">Compares local MD5 hashes against S3 metadata to detect changes. Unchanged files are copied server-side — zero re-upload bandwidth wasted.</p>
+        </div>
+        <div class="feature-card reveal">
+          <div class="feature-icon orange">🕒</div>
+          <h3 class="feature-title">Timestamp Isolation</h3>
+          <p class="feature-desc">Every backup lives in its own YYYY-MM-DD_HH-MM-SS prefix. No overwrites, no conflicts — clean point-in-time recovery.</p>
+        </div>
+        <div class="feature-card reveal">
+          <div class="feature-icon green">🛡️</div>
+          <h3 class="feature-title">Enterprise Encryption</h3>
+          <p class="feature-desc">AES-256 (SSE-S3) enabled by default. Optional AWS KMS support for organizations requiring customer-managed encryption keys.</p>
+        </div>
+        <div class="feature-card reveal">
+          <div class="feature-icon purple">🔄</div>
+          <h3 class="feature-title">Lifecycle Automation</h3>
+          <p class="feature-desc">Auto-transitions backups: Standard → Standard-IA (30d) → Glacier (90d) → Expiration (365d). Set once, save continuously.</p>
+        </div>
+        <div class="feature-card reveal">
+          <div class="feature-icon red">📡</div>
+          <h3 class="feature-title">Retry & Resilience</h3>
+          <p class="feature-desc">Exponential backoff with configurable retry logic wraps every S3 operation. Network blips won't derail your backup.</p>
+        </div>
+        <div class="feature-card reveal">
+          <div class="feature-icon blue">🧪</div>
+          <h3 class="feature-title">Dry-Run Mode</h3>
+          <p class="feature-desc">Preview exactly which files will upload and which will skip — without touching a single AWS API. Perfect for validation.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Architecture Section -->
+  <section id="architecture">
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="section-tag">Architecture</span>
+        <h2 class="section-title">Clean, Modular Design</h2>
+        <p class="section-desc">Four focused modules, each with a single responsibility. No monoliths here.</p>
+      </div>
+      <div class="arch-layout reveal">
+        <div class="arch-tree">
+          <div class="arch-tree-title">📂 s3-backup-tool/</div>
+          <div class="tree-item">
+            <span class="tree-icon">⚙️</span>
+            <span class="tree-name">config.py</span>
+            <span class="tree-desc">CLI > .env > Defaults</span>
+          </div>
+          <div class="tree-item">
+            <span class="tree-icon">📄</span>
+            <span class="tree-name">file_utils.py</span>
+            <span class="tree-desc">MD5 hashing & dir scan</span>
+          </div>
+          <div class="tree-item">
+            <span class="tree-icon">☁️</span>
+            <span class="tree-name">s3_utils.py</span>
+            <span class="tree-desc">boto3, pagination, lifecycle</span>
+          </div>
+          <div class="tree-item">
+            <span class="tree-icon">🚀</span>
+            <span class="tree-name">s3_tool.py</span>
+            <span class="tree-desc">CLI entry point & orchestrator</span>
+          </div>
+          <div class="tree-item">
+            <span class="tree-icon">📦</span>
+            <span class="tree-name">requirements.txt</span>
+            <span class="tree-desc">boto3, dotenv, tqdm</span>
+          </div>
+          <div class="tree-item">
+            <span class="tree-icon">📘</span>
+            <span class="tree-name">README.md</span>
+            <span class="tree-desc">Documentation</span>
+          </div>
+        </div>
+        <div class="arch-diagram">
+          <img src="assets/architecture.png" alt="S3 Backup Tool Architecture Diagram">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Deep Dive Section -->
+  <section id="deepdive">
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="section-tag">Technical Deep-Dive</span>
+        <h2 class="section-title">Why ETags Aren't Enough</h2>
+        <p class="section-desc">The subtle engineering decision that makes this tool reliable at any scale.</p>
+      </div>
+      <div class="deepdive-cards reveal">
+        <div class="deepdive-card problem">
+          <div class="deepdive-label red">🛑 The Problem</div>
+          <h3 class="deepdive-title">ETag Limitations</h3>
+          <p class="deepdive-text">
+            A naive approach compares local MD5 against S3's ETag. This works for small, single-part uploads — but <strong>completely fails</strong> for multipart uploads. Multipart ETags use a "hash of hashes" format that can't be compared to a standard MD5.
+          </p>
+          <div class="deepdive-code">
+            c9a5a6e7...f034<strong style="color:#f87171">-2</strong>&nbsp;&nbsp;← multipart ETag, NOT an MD5
+          </div>
+        </div>
+        <div class="deepdive-card solution">
+          <div class="deepdive-label green">✅ Our Solution</div>
+          <h3 class="deepdive-title">Metadata Injection</h3>
+          <p class="deepdive-text">
+            We calculate the local MD5 and inject it into S3 metadata under the key <code>x-amz-meta-file-md5</code> on every upload. Subsequent backups fetch this metadata — guaranteeing <strong>100% reliable</strong> change detection regardless of upload method or file size.
+          </p>
+          <div class="deepdive-code">
+            x-amz-meta-file-md5: <span style="color:#3ddc84">d41d8cd98f00b204e9800998ecf8427e</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Usage Section -->
+  <section id="usage">
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="section-tag">Usage</span>
+        <h2 class="section-title">Three Commands. Full Control.</h2>
+        <p class="section-desc">Upload, download, and manage lifecycle — all from your terminal.</p>
+      </div>
+      <div class="reveal">
+        <div class="usage-tabs" id="usageTabs">
+          <button class="usage-tab active" data-tab="upload">📤 Upload</button>
+          <button class="usage-tab" data-tab="download">📥 Download</button>
+          <button class="usage-tab" data-tab="lifecycle">⚙️ Lifecycle</button>
+        </div>
+        <div class="usage-panel active" id="panel-upload">
+          <p class="usage-desc">Recursively scans a directory, computes MD5 metadata, and performs an incremental upload to S3.</p>
+          <div class="code-block">
+            <span class="comment"># Preview what will happen (no API calls)</span><br>
+            <span class="cmd">python s3_tool.py</span> <span class="arg">upload</span> <span class="flag">--dir</span> ./my_data <span class="flag">--dry-run</span><br><br>
+            <span class="comment"># Production upload with encryption</span><br>
+            <span class="cmd">python s3_tool.py</span> <span class="arg">upload</span> <span class="flag">--dir</span> ./my_data<br><br>
+            <span class="comment"># Override bucket and region on the fly</span><br>
+            <span class="cmd">python s3_tool.py</span> <span class="arg">upload</span> <span class="flag">--dir</span> ./my_data <span class="flag">--bucket</span> my-bucket <span class="flag">--region</span> eu-central-1
+          </div>
+        </div>
+        <div class="usage-panel" id="panel-download">
+          <p class="usage-desc">Downloads a specific backup using S3 pagination — fully supporting directories with 1000+ files.</p>
+          <div class="code-block">
+            <span class="comment"># Restore a specific timestamp backup</span><br>
+            <span class="cmd">python s3_tool.py</span> <span class="arg">download</span> <span class="flag">--backup</span> 2023-10-15_14-30-00 <span class="flag">--dir</span> ./restored_data
+          </div>
+        </div>
+        <div class="usage-panel" id="panel-lifecycle">
+          <p class="usage-desc">Applies the pre-configured data retention and cost-optimization lifecycle rules to your S3 bucket.</p>
+          <div class="code-block">
+            <span class="comment"># Standard → IA (30d) → Glacier (90d) → Delete (365d)</span><br>
+            <span class="cmd">python s3_tool.py</span> <span class="arg">lifecycle</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Getting Started Section -->
+  <section id="start">
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="section-tag">Quick Start</span>
+        <h2 class="section-title">Up and Running in 3 Steps</h2>
+        <p class="section-desc">From clone to first backup in under two minutes.</p>
+      </div>
+      <div class="steps reveal">
+        <div class="step-card">
+          <div class="step-number">1</div>
+          <h3 class="step-title">Clone & Install</h3>
+          <p class="step-text">Grab the repo and install the lightweight Python dependencies.</p>
+          <div class="step-code">
+            git clone https://github.com/<br>kevinjosh10/s3-backup-tool.git<br><br>
+            pip install -r requirements.txt
+          </div>
+        </div>
+        <div class="step-card">
+          <div class="step-number">2</div>
+          <h3 class="step-title">Configure</h3>
+          <p class="step-text">Set your S3 bucket via CLI flags, environment variables, or a .env file.</p>
+          <div class="step-code">
+            <span style="color:var(--text-muted)"># .env file</span><br>
+            S3_BUCKET_NAME=my-bucket<br>
+            AWS_REGION=us-west-2
+          </div>
+        </div>
+        <div class="step-card">
+          <div class="step-number">3</div>
+          <h3 class="step-title">Backup</h3>
+          <p class="step-text">Run your first incremental backup with full encryption and logging.</p>
+          <div class="step-code">
+            python s3_tool.py upload \<br>
+            &nbsp;&nbsp;--dir ./important_data
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <p class="footer-text">Built with <span class="heart">❤️</span> by <strong>Kevin Josh</strong></p>
+      <div class="footer-links">
+        <a href="https://github.com/kevinjosh10" target="_blank">GitHub</a>
+        <a href="https://linkedin.com/in/kevin-josh10" target="_blank">LinkedIn</a>
+        <a href="https://github.com/kevinjosh10/s3-backup-tool" target="_blank">Repository</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // === Scroll Reveal ===
+    const revealElements = document.querySelectorAll('.reveal');
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+    revealElements.forEach((el) => revealObserver.observe(el));
+
+    // === Usage Tabs ===
+    document.getElementById('usageTabs').addEventListener('click', (e) => {
+      const tab = e.target.closest('.usage-tab');
+      if (!tab) return;
+      const target = tab.dataset.tab;
+      document.querySelectorAll('.usage-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.usage-panel').forEach(p => p.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById('panel-' + target).classList.add('active');
+    });
+
+    // === Navbar shrink on scroll ===
+    window.addEventListener('scroll', () => {
+      const nav = document.getElementById('navbar');
+      if (window.scrollY > 80) {
+        nav.style.padding = '10px 0';
+        nav.style.borderBottomColor = 'rgba(77,166,255,0.15)';
+      } else {
+        nav.style.padding = '16px 0';
+        nav.style.borderBottomColor = 'rgba(77,166,255,0.08)';
+      }
+    });
+
+    // === Mobile toggle ===
+    document.getElementById('mobileToggle').addEventListener('click', () => {
+      const links = document.getElementById('navLinks');
+      const isVisible = links.style.display === 'flex';
+      links.style.display = isVisible ? 'none' : 'flex';
+      links.style.flexDirection = 'column';
+      links.style.position = 'absolute';
+      links.style.top = '60px';
+      links.style.right = '24px';
+      links.style.background = 'rgba(6,6,14,0.95)';
+      links.style.padding = '16px 24px';
+      links.style.borderRadius = '12px';
+      links.style.border = '1px solid rgba(77,166,255,0.15)';
+      links.style.backdropFilter = 'blur(20px)';
+    });
+  </script>
+
+</body>
+</html>
